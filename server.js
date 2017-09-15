@@ -1,4 +1,3 @@
-
 // Node Dependencies
 var express = require('express');
 var exphbs = require('express-handlebars');
@@ -21,7 +20,9 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(process.cwd() + '/public'));
 
 // Express-Handlebars
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({
+  defaultLayout: 'main'
+}));
 app.set('view engine', 'handlebars');
 
 
@@ -29,37 +30,38 @@ app.set('view engine', 'handlebars');
 // ---------------------------------------------------------------------------------------------------------------
 // Connect to localhost if not a production environment
 //if(process.env.NODE_ENV == 'production'){
-  //mongoose.connect('mongodb://heroku_......');
-//}
-//else{
+//mongoose.connect('mongodb://heroku_......');
+if (process.env.MONGODB_URI) {
+  mongoose.connect(process.env.MONGODB_URI);
+} else {
   mongoose.connect('mongodb://localhost/news-scraper');
-  
-//}
-var db = mongoose.connection;
+}
 
-// Show any Mongoose errors
-db.on('error', function(err) {
-  console.log('Mongoose Error: ', err);
-});
+  var db = mongoose.connection;
 
-// Once logged in to the db through mongoose, log a success message
-db.once('open', function() {
-  console.log('Mongoose connection successful.');
-});
+  // Show any Mongoose errors
+  db.on('error', function(err) {
+    console.log('Mongoose Error: ', err);
+  });
 
-// Import the Comment and Article models
-var Comment = require('./models/Comment.js');
-var Article = require('./models/Article.js');
-// ---------------------------------------------------------------------------------------------------------------
+  // Once logged in to the db through mongoose, log a success message
+  db.once('open', function() {
+    console.log('Mongoose connection successful.');
+  });
 
-
-// Import Routes/Controller
-var router = require('./controllers/controller.js');
-app.use('/', router);
+  // Import the Comment and Article models
+  var Comment = require('./models/Comment.js');
+  var Article = require('./models/Article.js');
+  // ---------------------------------------------------------------------------------------------------------------
 
 
-// Launch App
-var port = process.env.PORT || 3000;
-app.listen(port, function(){
-  console.log('Running on port: ' + port);
-});
+  // Import Routes/Controller
+  var router = require('./controllers/controller.js');
+  app.use('/', router);
+
+
+  // Launch App
+  var port = process.env.PORT || 3000;
+  app.listen(port, function() {
+    console.log('Running on port: ' + port);
+  });
