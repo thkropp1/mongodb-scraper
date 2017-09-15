@@ -1,10 +1,14 @@
 {{!-- Templating for all Articles  --}}
 
 {{!-- Iterate Over all the articles --}}
+
+<li class="collection-header grey lighten-2">
+  <h3><b>Saved Articles</b></h3>
+</li>
 {{#each articles}}
   <ul class="collapsible" data-collapsible="accordion">
     <span class="badge">
-      <form id="form-del-{{_id}}" action="save/article/{{_id}}" method="post">
+      <form id="form-del-{{_id}}" action="delete/savedArticle/{{_id}}" method="post">
         <input class="btn-small delete-saved-button" data-id="{{_id}}" type="submit" value="Delete Saved Article" style="color: white; background-color: teal; border-color: teal;">
       </form>
     </span>

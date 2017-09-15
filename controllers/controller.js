@@ -49,10 +49,8 @@ router.get('/articles', function(req, res) {
 
 router.get('/saved', function(req, res) {
 
-  // Search MongoDB for all saved article entries (sort newest to top, assuming Ids increment)
-  Article.find({"saved": "true"}).sort({
-      _id: -1
-    })
+  // Search MongoDB for all distinct saved article entries (sort newest to top, assuming Ids increment)
+  Article.find({"saved": "true"}).sort({_id: -1})
 
     // But also populate all of the comments associated with the articles.
     .populate('comments')
@@ -202,7 +200,6 @@ router.post('/save/article/:id', function(req, res) {
 
   // Collect Article id
   var articleId = req.params.id;
-  console.log("Saved article");
   Article.findOneAndUpdate({
       '_id': articleId
     }, {
@@ -218,9 +215,11 @@ router.post('/save/article/:id', function(req, res) {
       if (err) {
         console.log(err);
       } else {
-
         // Send Success Header
-        res.sendStatus(200);
+        //res.sendStatus(200);
+        console.log("Saved article successfully");
+        // Display all the scraped articles
+        res.redirect("/articles");
       }
     });
 });
@@ -247,9 +246,11 @@ router.post('/delete/savedArticle/:id', function(req, res) {
       if (err) {
         console.log(err);
       } else {
-
         // Send Success Header
-        res.sendStatus(200);
+        //res.sendStatus(200);
+        console.log("Saved article successfully");
+        // Display all the saved articles
+        res.redirect("/saved");
       }
     });
 });
