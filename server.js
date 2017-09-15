@@ -28,9 +28,7 @@ app.set('view engine', 'handlebars');
 
 // Database Configuration with Mongoose
 // ---------------------------------------------------------------------------------------------------------------
-// Connect to localhost if not a production environment
-//if(process.env.NODE_ENV == 'production'){
-//mongoose.connect('mongodb://heroku_......');
+
 if (process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI);
 } else {

@@ -82,6 +82,9 @@ router.get('/scrape', function(req, res) {
     // Then, load html into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
 
+    // This is an error handler for the newspaper website only
+    var titlesArray = [];
+
     // Now, we grab every h2 within an article tag, and do the following:
     $("div.image-wrapper").each(function(i, element) {
 
@@ -95,28 +98,66 @@ router.get('/scrape', function(req, res) {
       result.link = $(this).parent().attr("href");
       console.log(result);
 
-      // Using our Article model, create a new entry
-      // This effectively passes the result object to the entry (and the title and link)
-      var entry = new Article(result);
+      // Error handling to ensure there are no empty scrapes
+      if (result.image !== "" && result.title !== "" && result.link !== "") {
 
-      // Now, save that entry to the db
-      entry.save(function(err, doc) {
-        // Log any errors
-        if (err) {
-          console.log(err);
+        // Check within each scrape since the Los Angeles Daily News may have duplicate articles...
+        // Due to async, moongoose will not save the articles fast enough for the duplicates within a scrape to be caught
+        if (titlesArray.indexOf(result.title) == -1) {
+
+          // Push the saved item to our titlesArray to prevent duplicates
+          titlesArray.push(result.title);
+
+          // Only add the entry to the database if is not already there
+          Article.count({
+            title: result.title
+          }, function(err, test) {
+
+            // If the count is 0, then the entry is unique and should be saved
+            if (test == 0) {
+
+              // Using the Article model, create a new entry (note that the "result" object has the exact same key-value pairs of the model)
+              var entry = new Article(result);
+
+              // Save the entry to MongoDB
+              entry.save(function(err, doc) {
+                // log any errors
+                if (err) {
+                  console.log(err);
+                }
+                // or log the doc that was saved to the DB
+                else {
+                  console.log(doc);
+                }
+              });
+
+            }
+            // Log that scrape is working, just the content was already in the Database
+            else {
+              console.log('Redundant Database Content. Not saved to DB.')
+            }
+
+          });
         }
-        // Or log the doc
+        // Log that scrape is working, just the content was missing parts
         else {
-          console.log(doc);
+          console.log('Redundant News Content. Not Saved to DB.')
         }
-      });
+
+      }
+      // Log that scrape is working, just the content was missing parts
+      else {
+        console.log('Empty Content. Not Saved to DB.')
+      }
 
     });
-  });
-  // Display all the scraped articles
-  res.redirect("/articles");
-});
 
+    // Redirect to the Articles Page, done at the end of the request for proper scoping
+    res.redirect("/articles");
+
+  });
+
+});
 
 
 
