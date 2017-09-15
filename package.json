@@ -1,0 +1,29 @@
+{
+  "name": "mongodb-scraper",
+  "version": "1.0.0",
+  "description": "MongoDb web scraper",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thkropp1/mongodb-scraper.git"
+  },
+  "author": "Teresa Kropp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thkropp1/mongodb-scraper/issues"
+  },
+  "homepage": "https://github.com/thkropp1/mongodb-scraper#readme",
+  "dependencies": {
+    "body-parser": "^1.18.1",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "moment": "^2.18.1",
+    "mongoose": "^4.11.11",
+    "morgan": "^1.8.2",
+    "request": "^2.81.0"
+  }
+}
